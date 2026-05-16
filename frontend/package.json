@@ -1,0 +1,9 @@
+{
+  "name": "tecnorepuestos-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Próximamente configuración de desarrollo'"
+  },
+  "dependencies": {}
+}
