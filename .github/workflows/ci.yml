@@ -1,23 +1,55 @@
-name: CI Pipeline TecnoRepuestos
+name: Integración Continua TecnoRepuestos
 
+# Se activa en push y pull_request para las ramas main y develop
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
-  build:
+  # Job 1: Pruebas del Backend
+  backend-tests:
+    name: Pruebas Backend
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
     
-    - name: Configurar Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        
-    - name: Validar sintaxis y pruebas
-      run: |
-        echo "Ejecutando validaciones iniciales..."
-        # Aquí se ejecutarán los tests automáticos a futuro
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          # Instalamos las librerías necesarias para las pruebas
+          pip install pytest httpx fastapi pydantic
+          
+      - name: Ejecutar pytest (unitarias e integración)
+        run: |
+          cd backend
+          python -m pytest tests/ -v
+
+  # Job 2: Construcción del Frontend (En paralelo)
+  frontend-build:
+    name: Construcción Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Instalar npm y verificar compilación
+        run: |
+          # Solo se ejecutará correctamente si ya tienes tu proyecto React en la carpeta frontend
+          cd frontend
+          npm install
+          npm run build
